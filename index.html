@@ -55,6 +55,7 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
 @media(max-width:640px){.cols,.row{grid-template-columns:1fr}.nums{gap:6px}}
 @media(prefers-reduced-motion:reduce){.bar i{transition:none}}
 </style>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 </head>
 <body>
 <header>
@@ -79,7 +80,7 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
     <div class="card">
       <!-- Step 1: details -->
       <div class="step on" id="s1">
-        <div class="fixed"><small>One-time test donation</small><b>₹120</b><small>PayU Sandbox test only · no real money collected</small></div>
+        <div class="fixed"><small>Planned monthly contribution</small><b>₹120</b><small>Recurring payments require payment-provider setup</small></div>
         <div class="row">
           <div><label for="name">Full name *</label><input id="name" autocomplete="name" required></div>
           <div><label for="mobile">Mobile number *</label><input id="mobile" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" required></div>
@@ -87,7 +88,7 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
         <label for="email">Email * (OTP will be sent here)</label>
         <input id="email" type="email" autocomplete="email" required>
         <label class="chk"><input type="checkbox" id="anon"> Show my donation as Anonymous</label>
-        <label class="chk"><input type="checkbox" id="consent"> I understand this is a one-time test payment; no monthly AutoPay mandate will be created. *</label>
+        <label class="chk"><input type="checkbox" id="consent"> I understand this is a Sandbox test payment; no real money will be collected. *</label>
         <button class="btn" id="otpBtn">Send OTP to my email</button>
       </div>
 
@@ -103,10 +104,10 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
 
       <!-- Step 3: pay -->
       <div class="step" id="s3">
-        <p>Email verified. One-time test donation:</p>
+        <p>Email verified. Planned monthly contribution:</p>
         <h2 id="payAmt" style="margin:6px 0"></h2>
         <p id="payFor" style="color:var(--mute)"></p>
-        <!-- PayU Sandbox checkout · one-time test payment only -->
+        <!-- PAYMENT GATEWAY AREA: your gateway's button / checkout opens from startPayment() below -->
         <button class="btn gold" id="payBtn">Continue to secure payment</button>
       </div>
 
@@ -114,7 +115,7 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
       <div class="step thanks" id="s4">
         <div class="bism">جزاك الله خيرا</div>
         <h2>JazakAllah Khair</h2>
-        <p>This page does not activate a recurring mandate. A real payment provider must confirm any donation.</p>
+        <p>Cashfree Sandbox test only. No real money was collected and no recurring mandate was created.</p>
         <button class="btn" onclick="location.reload()">Donate again</button>
       </div>
       <div class="msg" id="msg" role="alert"></div>
@@ -131,8 +132,8 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
 <script>
 /* ================= CONFIG ================= */
 const CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycbx9QiuDy6pY_t0HeHIh9SR_7WdhacSQFoTTk8RN_2je28A7BozcxqP5cQIaT2j_61gGUA/exec",              // paste your Google Apps Script Web App URL here
-  PAYMENT_ENABLED: true,    // PayU Sandbox test flow only; not live payments
+  API_URL: "https://script.google.com/macros/s/AKfycbxu1QwyN2NHam_oKut5TNF64eZ5DEiJ9cDOv1nZErIm8tuVeEpj11Hk3E4gl6iKBwdBow/exec",              // paste your Google Apps Script Web App URL here
+  PAYMENT_ENABLED: false,   // set true after you connect a payment gateway
   AMOUNT: 120             // fixed monthly donation in rupees
 };
 /* ========================================== */
@@ -189,7 +190,7 @@ async function load(){
 
 /* ---- step 1: validate + send OTP ---- */
 function form(){return{name:$("name").value.trim(),mobile:$("mobile").value.trim(),email:$("email").value.trim(),
-  amount:CONFIG.AMOUNT,purpose:"One-time PayU test donation",anonymous:$("anon").checked};}
+  amount:CONFIG.AMOUNT,purpose:"Monthly Auto-Debit",anonymous:$("anon").checked};}
 async function sendOtp(){
   const f=form();
   if(f.name.length<2) return note("Enter your full name.");
@@ -228,45 +229,54 @@ $("verifyBtn").onclick=async()=>{
     if(!r.ok) return note(r.error);
     token=r.token; verifiedEmail=form().email.toLowerCase();
     const f=form();
-    $("payAmt").textContent=inr(f.amount)+" test donation";
-    $("payFor").textContent="Email verified. This is a one-time PayU Sandbox test.";
+    $("payAmt").textContent=inr(f.amount)+" test payment";
+    $("payFor").textContent="Cashfree Sandbox test only. This is a one-time test payment, not a recurring mandate.";
     show("s3");
-    note("Email verified. Continue to PayU Sandbox to simulate a one-time ₹120 payment.",true);
+    note("Email verified. Payment setup is unavailable until a real gateway is connected.",true);
   }catch(e){note("Could not reach the server ("+(e.message||e)+"). Check API_URL ends with /exec and access is set to Anyone.");}
   finally{setBusy($("verifyBtn"),false,"Verify OTP");}
 };
 
-/* ---- step 3: PayU Sandbox hosted checkout ---- */
+/* ---- step 3: Cashfree Sandbox payment ---- */
 async function startPayment(order){
-  const response = await api({
-    action:"preparePayU", token:token, name:order.name, email:order.email,
-    mobile:order.mobile
+  if(typeof window.Cashfree !== 'function') throw new Error('Cashfree Checkout SDK did not load. Refresh the page and try again.');
+
+  const created = await api({
+    action: 'createCashfreeOrder', token: token,
+    name: order.name, mobile: order.mobile, email: order.email,
+    amount: CONFIG.AMOUNT, anonymous: order.anonymous
   });
-  if(!response || !response.ok) throw new Error(response && response.error ? response.error : "Could not prepare PayU test payment.");
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = response.paymentUrl;
-  form.acceptCharset = "UTF-8";
-  form.style.display = "none";
-  Object.keys(response.fields).forEach(key=>{
-    const input=document.createElement("input");
-    input.type="hidden"; input.name=key; input.value=String(response.fields[key] == null ? "" : response.fields[key]);
-    form.appendChild(input);
-  });
-  document.body.appendChild(form);
-  form.submit();
-  return new Promise(()=>{}); // Navigation to PayU takes over this page.
+  if(!created.ok) throw new Error(created.error || 'Could not create Cashfree test order.');
+
+  const cashfree = window.Cashfree({mode: 'sandbox'});
+  let checkoutError = null;
+  try {
+    await cashfree.checkout({paymentSessionId: created.paymentSessionId, redirectTarget: '_modal'});
+  } catch(e) {
+    checkoutError = e;
+  }
+
+  // The browser callback is not proof of payment. Ask our backend to verify with Cashfree.
+  const verified = await api({action:'verifyCashfreePayment', orderId:created.orderId, token:token});
+  if(!verified.ok || verified.status !== 'Success') {
+    throw new Error(verified.error || (checkoutError ? 'Payment was not completed.' : 'Cashfree has not confirmed the test payment.'));
+  }
+  return {paymentId: verified.paymentId, status:'Success'};
 }
+
 $("payBtn").onclick=async()=>{
   const f=form();
   if(!token || verifiedEmail!==f.email.toLowerCase()) return note("Please verify your email again.");
-  setBusy($("payBtn"),true,"Continue to secure payment");
+  setBusy($("payBtn"),true,"Opening Cashfree test checkout…");
   try{
-    await startPayment({...f,email:verifiedEmail});
-  }catch(e){note(e.message||"Payment was not completed.");}
+    const p=await startPayment({...f,email:verifiedEmail});
+    if(!p || !p.paymentId || p.status!=="Success") throw new Error("Cashfree did not confirm the test payment.");
+    show("s4");
+    $("s4").querySelector('p').textContent="Cashfree Sandbox payment verified. This was a test only; no real money was collected and no recurring mandate was created.";
+    note("Test payment verified by Cashfree and saved to the Cashfree_Test_Transactions sheet.",true);
+  }catch(e){note(e.message||"Test payment was not completed.");}
   finally{setBusy($("payBtn"),false,"Continue to secure payment");}
 };
-
 load(); setInterval(()=>{if(!document.hidden) load();},60000);
 window.addEventListener("online",load);
 </script>
