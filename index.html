@@ -79,7 +79,7 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
     <div class="card">
       <!-- Step 1: details -->
       <div class="step on" id="s1">
-        <div class="fixed"><small>Planned monthly contribution</small><b>₹120</b><small>Recurring payments require payment-provider setup</small></div>
+        <div class="fixed"><small>One-time test donation</small><b>₹120</b><small>PayU Sandbox test only · no real money collected</small></div>
         <div class="row">
           <div><label for="name">Full name *</label><input id="name" autocomplete="name" required></div>
           <div><label for="mobile">Mobile number *</label><input id="mobile" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" required></div>
@@ -87,7 +87,7 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
         <label for="email">Email * (OTP will be sent here)</label>
         <input id="email" type="email" autocomplete="email" required>
         <label class="chk"><input type="checkbox" id="anon"> Show my donation as Anonymous</label>
-        <label class="chk"><input type="checkbox" id="consent"> I understand recurring payments are not active until a secure payment provider is connected. *</label>
+        <label class="chk"><input type="checkbox" id="consent"> I understand this is a one-time test payment; no monthly AutoPay mandate will be created. *</label>
         <button class="btn" id="otpBtn">Send OTP to my email</button>
       </div>
 
@@ -103,10 +103,10 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
 
       <!-- Step 3: pay -->
       <div class="step" id="s3">
-        <p>Email verified. Planned monthly contribution:</p>
+        <p>Email verified. One-time test donation:</p>
         <h2 id="payAmt" style="margin:6px 0"></h2>
         <p id="payFor" style="color:var(--mute)"></p>
-        <!-- PAYMENT GATEWAY AREA: your gateway's button / checkout opens from startPayment() below -->
+        <!-- PayU Sandbox checkout · one-time test payment only -->
         <button class="btn gold" id="payBtn">Continue to secure payment</button>
       </div>
 
@@ -131,8 +131,8 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
 <script>
 /* ================= CONFIG ================= */
 const CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycbyl-tXK8t9T3RB9PhREQyqs9K77rhLRBagB73Qwb-TBCc-O63Ar3XMmTndMeDIbHcBRdQ/exec",              // paste your Google Apps Script Web App URL here
-  PAYMENT_ENABLED: false,   // set true after you connect a payment gateway
+  API_URL: "https://script.google.com/macros/s/AKfycbx9QiuDy6pY_t0HeHIh9SR_7WdhacSQFoTTk8RN_2je28A7BozcxqP5cQIaT2j_61gGUA/exec",              // paste your Google Apps Script Web App URL here
+  PAYMENT_ENABLED: true,    // PayU Sandbox test flow only; not live payments
   AMOUNT: 120             // fixed monthly donation in rupees
 };
 /* ========================================== */
@@ -189,7 +189,7 @@ async function load(){
 
 /* ---- step 1: validate + send OTP ---- */
 function form(){return{name:$("name").value.trim(),mobile:$("mobile").value.trim(),email:$("email").value.trim(),
-  amount:CONFIG.AMOUNT,purpose:"Monthly Auto-Debit",anonymous:$("anon").checked};}
+  amount:CONFIG.AMOUNT,purpose:"One-time PayU test donation",anonymous:$("anon").checked};}
 async function sendOtp(){
   const f=form();
   if(f.name.length<2) return note("Enter your full name.");
@@ -228,33 +228,41 @@ $("verifyBtn").onclick=async()=>{
     if(!r.ok) return note(r.error);
     token=r.token; verifiedEmail=form().email.toLowerCase();
     const f=form();
-    $("payAmt").textContent=inr(f.amount)+" planned monthly";
-    $("payFor").textContent="Email verified. Secure recurring payments are not connected.";
+    $("payAmt").textContent=inr(f.amount)+" test donation";
+    $("payFor").textContent="Email verified. This is a one-time PayU Sandbox test.";
     show("s3");
-    note("Email verified. Payment setup is unavailable until a real gateway is connected.",true);
+    note("Email verified. Continue to PayU Sandbox to simulate a one-time ₹120 payment.",true);
   }catch(e){note("Could not reach the server ("+(e.message||e)+"). Check API_URL ends with /exec and access is set to Anyone.");}
   finally{setBusy($("verifyBtn"),false,"Verify OTP");}
 };
 
-/* ---- step 3: payment ---- */
-/* ADD YOUR PAYMENT GATEWAY HERE.
-   Create a monthly recurring mandate / subscription (UPI AutoPay or e-mandate) for `order.amount`
-   with order.name, order.email, order.mobile, wait for the donor to approve it,
-   then return { paymentId: "<subscription or mandate id from gateway>" }.
-   Throw an Error if the payment fails or the user closes the window. */
+/* ---- step 3: PayU Sandbox hosted checkout ---- */
 async function startPayment(order){
-  throw new Error("Online payment is not available yet. No money has been collected and no recurring mandate has been created. Connect and verify a real payment gateway before accepting donations.");
+  const response = await api({
+    action:"preparePayU", token:token, name:order.name, email:order.email,
+    mobile:order.mobile
+  });
+  if(!response || !response.ok) throw new Error(response && response.error ? response.error : "Could not prepare PayU test payment.");
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = response.paymentUrl;
+  form.acceptCharset = "UTF-8";
+  form.style.display = "none";
+  Object.keys(response.fields).forEach(key=>{
+    const input=document.createElement("input");
+    input.type="hidden"; input.name=key; input.value=String(response.fields[key] == null ? "" : response.fields[key]);
+    form.appendChild(input);
+  });
+  document.body.appendChild(form);
+  form.submit();
+  return new Promise(()=>{}); // Navigation to PayU takes over this page.
 }
 $("payBtn").onclick=async()=>{
   const f=form();
   if(!token || verifiedEmail!==f.email.toLowerCase()) return note("Please verify your email again.");
   setBusy($("payBtn"),true,"Continue to secure payment");
   try{
-    const p=await startPayment({...f,email:verifiedEmail});
-    if(!p || !p.paymentId || p.status!=="Success") throw new Error("Payment was not confirmed by the provider.");
-    const r=await api({action:"record",token,...f,email:verifiedEmail,paymentId:p.paymentId,status:"Success"});
-    if(!r.ok) return note(r.error||"Could not record the verified payment.");
-    show("s4"); await load();
+    await startPayment({...f,email:verifiedEmail});
   }catch(e){note(e.message||"Payment was not completed.");}
   finally{setBusy($("payBtn"),false,"Continue to secure payment");}
 };
