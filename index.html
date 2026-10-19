@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Donate – Masjid Sarkar-e-Do-Alam (S.A.W)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Mukta:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#0E4D3A;--deep:#072F24;--mint:#E6F1EC;--gold:#C8A24A;--ink:#17261F;--mute:#5B6B63;--bg:#F3F7F4;--card:#fff;--red:#B3412F}
+*{box-sizing:border-box;margin:0}
+body{font-family:Mukta,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+.wrap{max-width:880px;margin:auto;padding:0 16px}
+header{background:var(--deep);color:#fff;text-align:center;padding:36px 16px 84px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 4l6 14 14-6-6 14 14 6-14 6 6 14-14-6-6 14-6-14-14 6 6-14-14-6 14-6-6-14 14 6z' fill='none' stroke='%23C8A24A' stroke-opacity='.18'/%3E%3C/svg%3E")}
+.bism{font-family:Amiri,serif;color:var(--gold);font-size:1.6rem}
+h1{font-family:Amiri,serif;font-size:clamp(1.9rem,6vw,3rem);line-height:1.2;margin:6px 0}
+header p{opacity:.85;max-width:520px;margin:8px auto 0}
+.ledger{margin-top:-60px;background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(7,47,36,.15);padding:22px;border-top:4px solid var(--gold)}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center}
+.nums b{display:block;font-family:Amiri,serif;font-size:clamp(1.3rem,5vw,2.1rem);color:var(--green)}
+.nums .sp b{color:var(--red)}.nums span{font-size:.85rem;color:var(--mute)}
+.bar{height:12px;background:var(--mint);border-radius:9px;margin-top:16px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--gold));transition:width 1s}
+.barcap{font-size:.8rem;color:var(--mute);margin-top:6px;text-align:center}
+section{margin:26px 0}
+h2{font-family:Amiri,serif;font-size:1.6rem;color:var(--green);margin-bottom:12px}
+.card{background:var(--card);border-radius:16px;padding:22px;box-shadow:0 2px 12px rgba(7,47,36,.07)}
+label{display:block;font-weight:600;font-size:.92rem;margin:12px 0 4px}
+input,select{width:100%;padding:12px;border:1.5px solid #cfdcd5;border-radius:10px;font:inherit;background:#fff}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fixed{text-align:center;background:var(--mint);border:1.5px dashed var(--gold);border-radius:14px;padding:14px}.fixed b{display:block;font-family:Amiri,serif;font-size:2.6rem;color:var(--green);line-height:1.1}.fixed small{color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{border:1.5px solid var(--green);background:#fff;color:var(--green);padding:8px 16px;border-radius:99px;font:600 .95rem Mukta;cursor:pointer}
+.chip.on{background:var(--green);color:#fff}
+.chk{display:flex;gap:8px;align-items:center;font-weight:400;margin-top:14px}.chk input{width:auto}
+.btn{width:100%;margin-top:18px;padding:14px;border:0;border-radius:12px;background:var(--green);color:#fff;font:700 1.05rem Mukta;cursor:pointer}
+.btn:hover{background:var(--deep)}.btn:disabled{opacity:.6}
+.btn.gold{background:var(--gold);color:var(--deep)}
+.link{background:none;border:0;color:var(--green);text-decoration:underline;cursor:pointer;font:inherit;margin-top:10px}
+.msg{margin-top:12px;padding:10px 12px;border-radius:10px;font-size:.92rem;display:none}
+.msg.err{display:block;background:#fbe9e5;color:var(--red)}.msg.ok{display:block;background:var(--mint);color:var(--green)}
+.step{display:none}.step.on{display:block}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+ul{list-style:none;padding:0}
+li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #e6eee9}
+li:last-child{border:0}li small{display:block;color:var(--mute)}li b{white-space:nowrap}
+.in b{color:var(--green)}.out b{color:var(--red)}
+.empty{color:var(--mute);padding:8px 0}
+.thanks{text-align:center}.thanks .bism{font-size:2.2rem}
+footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40px}
+@media(max-width:640px){.cols,.row{grid-template-columns:1fr}.nums{gap:6px}}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bism">بسم الله الرحمن الرحيم</div>
+  <h1>Masjid Sarkar-e-Do-Alam (S.A.W)</h1>
+  <p>Your sadqa and donation keep this house of Allah open. Every rupee is shown below, openly.</p>
+</header>
+
+<main class="wrap">
+  <div class="ledger" aria-live="polite">
+    <div class="nums">
+      <div><b id="rec">₹0</b><span>Received</span></div>
+      <div class="sp"><b id="spt">₹0</b><span>Spent</span></div>
+      <div><b id="bal">₹0</b><span>Balance in hand</span></div>
+    </div>
+    <div class="bar"><i id="barfill"></i></div>
+    <div class="barcap" id="barcap"></div>
+  </div>
+
+  <section>
+    <h2>Donate</h2>
+    <div class="card">
+      <!-- Step 1: details -->
+      <div class="step on" id="s1">
+        <div class="fixed"><small>Monthly donation, auto-debited</small><b>₹120</b><small>every month until you cancel</small></div>
+        <div class="row">
+          <div><label for="name">Full name *</label><input id="name" autocomplete="name" required></div>
+          <div><label for="mobile">Mobile number *</label><input id="mobile" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" required></div>
+        </div>
+        <label for="email">Email * (OTP will be sent here)</label>
+        <input id="email" type="email" autocomplete="email" required>
+        <label class="chk"><input type="checkbox" id="anon"> Show my donation as Anonymous</label>
+        <label class="chk"><input type="checkbox" id="consent"> I allow ₹120 to be auto-debited every month for the masjid. I can cancel any time. *</label>
+        <button class="btn" id="otpBtn">Send OTP to my email</button>
+      </div>
+
+      <!-- Step 2: OTP -->
+      <div class="step" id="s2">
+        <p>We sent a 6-digit OTP to <b id="mailTo"></b>.</p>
+        <label for="otp">Enter OTP</label>
+        <input id="otp" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
+        <button class="btn" id="verifyBtn">Verify OTP</button>
+        <button class="link" id="resend">Resend OTP</button>
+        <button class="link" id="back">Change details</button>
+      </div>
+
+      <!-- Step 3: pay -->
+      <div class="step" id="s3">
+        <p>Email verified. Approve the auto-debit of</p>
+        <h2 id="payAmt" style="margin:6px 0"></h2>
+        <p id="payFor" style="color:var(--mute)"></p>
+        <!-- PAYMENT GATEWAY AREA: your gateway's button / checkout opens from startPayment() below -->
+        <button class="btn gold" id="payBtn">Approve auto-debit</button>
+      </div>
+
+      <!-- Step 4: thanks -->
+      <div class="step thanks" id="s4">
+        <div class="bism">جزاك الله خيرا</div>
+        <h2>JazakAllah Khair</h2>
+        <p>Your monthly donation of ₹120 is set up. A confirmation was emailed to you.</p>
+        <button class="btn" onclick="location.reload()">Donate again</button>
+      </div>
+      <div class="msg" id="msg" role="alert"></div>
+    </div>
+  </section>
+
+  <section class="cols">
+    <div><h2>Recent donations</h2><div class="card"><ul id="dlist"></ul></div></div>
+    <div><h2>Where it was spent</h2><div class="card"><ul id="elist"></ul></div></div>
+  </section>
+</main>
+<footer>May Allah accept your donation. Ameen.<br>Updated live from the masjid's records.</footer>
+
+<script>
+/* ================= CONFIG ================= */
+const CONFIG = {
+  API_URL: "",              // paste your Google Apps Script Web App URL here
+  PAYMENT_ENABLED: false,   // set true after you connect a payment gateway
+  AMOUNT: 120             // fixed monthly donation in rupees
+};
+/* ========================================== */
+const $ = id => document.getElementById(id);
+const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN");
+let token = "", busy = false;
+
+/* ---- demo data shown until API_URL is set ---- */
+const DEMO = {received:184500,spent:121300,donors:96,
+ recentDonations:[{name:"Mohammed Rafiq",amount:2100,purpose:"General Fund",date:"2026-10-18"},{name:"Anonymous",amount:5100,purpose:"Masjid Construction",date:"2026-10-17"},{name:"Shabana B.",amount:501,purpose:"Iftar & Ramzan",date:"2026-10-17"}],
+ recentExpenses:[{date:"2026-10-15",title:"Electricity bill",amount:4200,note:"September"},{date:"2026-10-10",title:"Imam & Muazzin salary",amount:21000,note:"October"},{date:"2026-10-02",title:"Carpet & cleaning",amount:8800,note:""}]};
+
+async function api(payload){
+  if(!CONFIG.API_URL){ // demo behaviour for previewing the design
+    if(payload.action==="sendOtp") return {ok:true};
+    if(payload.action==="verifyOtp") return payload.otp==="123456"?{ok:true,token:"demo"}:{ok:false,error:"Demo mode: use OTP 123456."};
+    return {ok:true};
+  }
+  const r = await fetch(CONFIG.API_URL,{method:"POST",body:JSON.stringify(payload)}); // text/plain: no CORS preflight
+  return r.json();
+}
+
+function show(step){ document.querySelectorAll(".step").forEach(s=>s.classList.toggle("on",s.id===step)); note(""); }
+function note(t,ok){ const m=$("msg"); m.className="msg"+(t?(ok?" ok":" err"):""); m.textContent=t||""; }
+function setBusy(btn,on,label){ busy=on; btn.disabled=on; if(label) btn.textContent=on?"Please wait…":label; }
+
+/* ---- public numbers ---- */
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function render(d){
+  $("rec").textContent=inr(d.received); $("spt").textContent=inr(d.spent); $("bal").textContent=inr(d.received-d.spent);
+  const pct=d.received?Math.min(100,Math.round(d.spent/d.received*100)):0;
+  $("barfill").style.width=pct+"%";
+  $("barcap").textContent=pct+"% of donations spent · "+d.donors+" donors";
+  $("dlist").innerHTML=d.recentDonations.length?d.recentDonations.map(x=>`<li class="in"><div>${esc(x.name)}<small>${esc(x.purpose)} · ${esc(x.date)}</small></div><b>+${inr(x.amount)}</b></li>`).join(""):'<div class="empty">Be the first to donate.</div>';
+  $("elist").innerHTML=d.recentExpenses.length?d.recentExpenses.map(x=>`<li class="out"><div>${esc(x.title)}<small>${esc(x.note?x.note+" · ":"")}${esc(x.date)}</small></div><b>−${inr(x.amount)}</b></li>`).join(""):'<div class="empty">No expenses recorded yet.</div>';
+}
+async function load(){
+  try{ render(CONFIG.API_URL?await (await fetch(CONFIG.API_URL)).json():DEMO); }
+  catch(e){ $("barcap").textContent="Could not load latest figures. Pull down to refresh."; }
+}
+
+/* ---- step 1: validate + send OTP ---- */
+function form(){return{name:$("name").value.trim(),mobile:$("mobile").value.trim(),email:$("email").value.trim(),
+  amount:CONFIG.AMOUNT,purpose:"Monthly Auto-Debit",anonymous:$("anon").checked};}
+async function sendOtp(){
+  const f=form();
+  if(f.name.length<2) return note("Enter your full name.");
+  if(!/^[6-9]\d{9}$/.test(f.mobile)) return note("Enter a valid 10-digit mobile number.");
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) return note("Enter a valid email address.");
+  if(!$("consent").checked) return note("Please tick the auto-debit consent box.");
+  setBusy($("otpBtn"),true,"Send OTP to my email");
+  try{
+    const r=await api({action:"sendOtp",email:f.email,name:f.name});
+    if(!r.ok) return note(r.error);
+    $("mailTo").textContent=f.email; show("s2"); note("OTP sent. Check your inbox and spam folder.",true);
+  }catch(e){note("Network problem. Please try again.");}
+  finally{setBusy($("otpBtn"),false,"Send OTP to my email");}
+}
+$("otpBtn").onclick=sendOtp; $("resend").onclick=sendOtp; $("back").onclick=()=>show("s1");
+
+/* ---- step 2: verify OTP ---- */
+$("verifyBtn").onclick=async()=>{
+  setBusy($("verifyBtn"),true,"Verify OTP");
+  try{
+    const r=await api({action:"verifyOtp",email:form().email,otp:$("otp").value});
+    if(!r.ok) return note(r.error);
+    token=r.token; const f=form();
+    $("payAmt").textContent=inr(f.amount)+" every month"; $("payFor").textContent=f.purpose; show("s3");
+  }catch(e){note("Network problem. Please try again.");}
+  finally{setBusy($("verifyBtn"),false,"Verify OTP");}
+};
+
+/* ---- step 3: payment ---- */
+/* ADD YOUR PAYMENT GATEWAY HERE.
+   Create a monthly recurring mandate / subscription (UPI AutoPay or e-mandate) for `order.amount`
+   with order.name, order.email, order.mobile, wait for the donor to approve it,
+   then return { paymentId: "<subscription or mandate id from gateway>" }.
+   Throw an Error if the payment fails or the user closes the window. */
+async function startPayment(order){
+  if(!CONFIG.PAYMENT_ENABLED) return {paymentId:"TEST-"+Date.now(),status:"Test"}; // test mode, no real money
+  throw new Error("Payment gateway is not connected yet.");
+}
+$("payBtn").onclick=async()=>{
+  const f=form(); setBusy($("payBtn"),true,"Approve auto-debit");
+  try{
+    const p=await startPayment(f);
+    const r=await api({action:"record",token,...f,paymentId:p.paymentId,status:p.status||"Success"});
+    if(!r.ok) return note(r.error);
+    show("s4"); load();
+  }catch(e){note(e.message||"Payment was not completed.");}
+  finally{setBusy($("payBtn"),false,"Approve auto-debit");}
+};
+
+load(); setInterval(load,60000);
+</script>
+</body>
+</html>
