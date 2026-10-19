@@ -4,12 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Donate – Masjid Sarkar-e-Do-Alam (S.A.W)</title>
+<meta name="theme-color" content="#072F24">
+<meta name="description" content="Support Masjid Sarkar-e-Do-Alam and view its donation ledger.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23072F24'/%3E%3Cpath d='M10 51V30h8V19h5v11h5V18c0-7 5-12 10-12s10 5 10 12v12h5v-8h4v29z' fill='%23C8A24A'/%3E%3Cpath d='M7 51h50v5H7z' fill='%23E6F1EC'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Mukta:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--green:#0E4D3A;--deep:#072F24;--mint:#E6F1EC;--gold:#C8A24A;--ink:#17261F;--mute:#5B6B63;--bg:#F3F7F4;--card:#fff;--red:#B3412F}
 *{box-sizing:border-box;margin:0}
-body{font-family:Mukta,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+html{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}body{font-family:Mukta,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}button,input{touch-action:manipulation}button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}input,select{min-height:46px}button{transition:background-color .18s ease,transform .18s ease}button:active:not(:disabled){transform:translateY(1px)}::selection{background:var(--mint);color:var(--deep)}
 .wrap{max-width:880px;margin:auto;padding:0 16px}
 header{background:var(--deep);color:#fff;text-align:center;padding:36px 16px 84px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 4l6 14 14-6-6 14 14 6-14 6 6 14-14-6-6 14-6-14-14 6 6-14-14-6 14-6-6-14 14 6z' fill='none' stroke='%23C8A24A' stroke-opacity='.18'/%3E%3C/svg%3E")}
 .bism{font-family:Amiri,serif;color:var(--gold);font-size:1.6rem}
@@ -67,7 +70,7 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
       <div class="sp"><b id="spt">₹0</b><span>Spent</span></div>
       <div><b id="bal">₹0</b><span>Balance in hand</span></div>
     </div>
-    <div class="bar"><i id="barfill"></i></div>
+    <div class="bar" id="spendbar" role="progressbar" aria-label="Share of donations spent" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="barfill"></i></div>
     <div class="barcap" id="barcap"></div>
   </div>
 
@@ -76,7 +79,7 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
     <div class="card">
       <!-- Step 1: details -->
       <div class="step on" id="s1">
-        <div class="fixed"><small>Monthly donation, auto-debited</small><b>₹120</b><small>every month until you cancel</small></div>
+        <div class="fixed"><small>Planned monthly contribution</small><b>₹120</b><small>Recurring payments require payment-provider setup</small></div>
         <div class="row">
           <div><label for="name">Full name *</label><input id="name" autocomplete="name" required></div>
           <div><label for="mobile">Mobile number *</label><input id="mobile" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" required></div>
@@ -84,7 +87,7 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
         <label for="email">Email * (OTP will be sent here)</label>
         <input id="email" type="email" autocomplete="email" required>
         <label class="chk"><input type="checkbox" id="anon"> Show my donation as Anonymous</label>
-        <label class="chk"><input type="checkbox" id="consent"> I allow ₹120 to be auto-debited every month for the masjid. I can cancel any time. *</label>
+        <label class="chk"><input type="checkbox" id="consent"> I understand recurring payments are not active until a secure payment provider is connected. *</label>
         <button class="btn" id="otpBtn">Send OTP to my email</button>
       </div>
 
@@ -100,18 +103,18 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
 
       <!-- Step 3: pay -->
       <div class="step" id="s3">
-        <p>Email verified. Approve the auto-debit of</p>
+        <p>Email verified. Planned monthly contribution:</p>
         <h2 id="payAmt" style="margin:6px 0"></h2>
         <p id="payFor" style="color:var(--mute)"></p>
         <!-- PAYMENT GATEWAY AREA: your gateway's button / checkout opens from startPayment() below -->
-        <button class="btn gold" id="payBtn">Approve auto-debit</button>
+        <button class="btn gold" id="payBtn">Continue to secure payment</button>
       </div>
 
       <!-- Step 4: thanks -->
       <div class="step thanks" id="s4">
         <div class="bism">جزاك الله خيرا</div>
         <h2>JazakAllah Khair</h2>
-        <p>Your monthly donation of ₹120 is set up. A confirmation was emailed to you.</p>
+        <p>This page does not activate a recurring mandate. A real payment provider must confirm any donation.</p>
         <button class="btn" onclick="location.reload()">Donate again</button>
       </div>
       <div class="msg" id="msg" role="alert"></div>
@@ -128,14 +131,15 @@ footer{text-align:center;color:var(--mute);font-size:.85rem;padding:20px 16px 40
 <script>
 /* ================= CONFIG ================= */
 const CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycbyL17an85MuwCX_xVyZRQd2o-AcKPcxpe-ZOvveXTYTEij07xQ4b6etmuetq-APQylJwA/exec",              // paste your Google Apps Script Web App URL here
+  API_URL: "https://script.google.com/macros/s/AKfycbzLVYHV8O0OtQ8UhpvVQNTTLC0NTcH9PU_7x1K6DP5ew6HAmda49NHiCgFTqO-Rj1oG8A/exec",              // paste your Google Apps Script Web App URL here
   PAYMENT_ENABLED: false,   // set true after you connect a payment gateway
   AMOUNT: 120             // fixed monthly donation in rupees
 };
 /* ========================================== */
 const $ = id => document.getElementById(id);
 const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN");
-let token = "", busy = false;
+let token = "";
+let verifiedEmail = "";
 
 /* ---- demo data shown until API_URL is set ---- */
 const DEMO = {received:184500,spent:121300,donors:96,
@@ -148,27 +152,39 @@ async function api(payload){
     if(payload.action==="verifyOtp") return payload.otp==="123456"?{ok:true,token:"demo"}:{ok:false,error:"Demo mode: use OTP 123456."};
     return {ok:true};
   }
-  const r = await fetch(CONFIG.API_URL,{method:"POST",body:JSON.stringify(payload)}); // text/plain: no CORS preflight
-  return r.json();
+  const r = await fetch(CONFIG.API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),cache:"no-store"});
+  if(!r.ok) throw new Error("Server returned HTTP "+r.status+".");
+  const data = await r.json();
+  if(!data || typeof data.ok !== "boolean") throw new Error("Unexpected server response.");
+  return data;
 }
 
 function show(step){ document.querySelectorAll(".step").forEach(s=>s.classList.toggle("on",s.id===step)); note(""); }
 function note(t,ok){ const m=$("msg"); m.className="msg"+(t?(ok?" ok":" err"):""); m.textContent=t||""; }
-function setBusy(btn,on,label){ busy=on; btn.disabled=on; if(label) btn.textContent=on?"Please wait…":label; }
+function setBusy(btn,on,label){ btn.disabled=on; if(label) btn.textContent=on?"Please wait…":label; }
 
 /* ---- public numbers ---- */
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function render(d){
   $("rec").textContent=inr(d.received); $("spt").textContent=inr(d.spent); $("bal").textContent=inr(d.received-d.spent);
   const pct=d.received?Math.min(100,Math.round(d.spent/d.received*100)):0;
-  $("barfill").style.width=pct+"%";
-  $("barcap").textContent=pct+"% of donations spent · "+d.donors+" donors";
-  $("dlist").innerHTML=d.recentDonations.length?d.recentDonations.map(x=>`<li class="in"><div>${esc(x.name)}<small>${esc(x.purpose)} · ${esc(x.date)}</small></div><b>+${inr(x.amount)}</b></li>`).join(""):'<div class="empty">Be the first to donate.</div>';
-  $("elist").innerHTML=d.recentExpenses.length?d.recentExpenses.map(x=>`<li class="out"><div>${esc(x.title)}<small>${esc(x.note?x.note+" · ":"")}${esc(x.date)}</small></div><b>−${inr(x.amount)}</b></li>`).join(""):'<div class="empty">No expenses recorded yet.</div>';
+  $("barfill").style.width=pct+"%"; $("spendbar").setAttribute("aria-valuenow",String(pct));
+  $("barcap").textContent=pct+"% of donations spent · "+Number(d.donors||0)+" donors";
+  const donations=Array.isArray(d.recentDonations)?d.recentDonations:[];
+  const expenses=Array.isArray(d.recentExpenses)?d.recentExpenses:[];
+  $("dlist").innerHTML=donations.length?donations.map(x=>`<li class="in"><div>${esc(x.name)}<small>${esc(x.purpose)} · ${esc(x.date)}</small></div><b>+${inr(x.amount)}</b></li>`).join(""):'<div class="empty">Be the first to donate.</div>';
+  $("elist").innerHTML=expenses.length?expenses.map(x=>`<li class="out"><div>${esc(x.title)}<small>${esc(x.note?x.note+" · ":"")}${esc(x.date)}</small></div><b>−${inr(x.amount)}</b></li>`).join(""):'<div class="empty">No expenses recorded yet.</div>';
 }
 async function load(){
-  try{ render(CONFIG.API_URL?await (await fetch(CONFIG.API_URL)).json():DEMO); }
-  catch(e){ $("barcap").textContent="Could not load latest figures. Pull down to refresh."; }
+  try{
+    let data=DEMO;
+    if(CONFIG.API_URL){
+      const r=await fetch(CONFIG.API_URL,{cache:"no-store"});
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      data=await r.json();
+    }
+    render(data);
+  }catch(e){ $("barcap").textContent="Could not load live figures. Check the Apps Script deployment and refresh."; }
 }
 
 /* ---- step 1: validate + send OTP ---- */
@@ -188,16 +204,34 @@ async function sendOtp(){
   }catch(e){note("Could not reach the server ("+(e.message||e)+"). Check API_URL ends with /exec and access is set to Anyone.");}
   finally{setBusy($("otpBtn"),false,"Send OTP to my email");}
 }
-$("otpBtn").onclick=sendOtp; $("resend").onclick=sendOtp; $("back").onclick=()=>show("s1");
+$("otpBtn").onclick=sendOtp;
+$("resend").onclick=async()=>{
+  const f=form();
+  setBusy($("resend"),true,"Resend OTP");
+  try{
+    const r=await api({action:"sendOtp",email:f.email,name:f.name});
+    if(!r.ok) return note(r.error||"Could not resend OTP.");
+    $("otp").value="";
+    note("A new OTP was sent. Use the newest code and check your spam folder.",true);
+  }catch(e){note("Could not resend OTP: "+(e.message||e));}
+  finally{setBusy($("resend"),false,"Resend OTP");}
+};
+$("back").onclick=()=>show("s1");
 
 /* ---- step 2: verify OTP ---- */
 $("verifyBtn").onclick=async()=>{
+  const otp=$("otp").value.trim();
+  if(!/^\d{6}$/.test(otp)) return note("Enter the 6-digit OTP from your email.");
   setBusy($("verifyBtn"),true,"Verify OTP");
   try{
-    const r=await api({action:"verifyOtp",email:form().email,otp:$("otp").value});
+    const r=await api({action:"verifyOtp",email:form().email,otp});
     if(!r.ok) return note(r.error);
-    token=r.token; const f=form();
-    $("payAmt").textContent=inr(f.amount)+" every month"; $("payFor").textContent=f.purpose; show("s3");
+    token=r.token; verifiedEmail=form().email.toLowerCase();
+    const f=form();
+    $("payAmt").textContent=inr(f.amount)+" planned monthly";
+    $("payFor").textContent="Email verified. Secure recurring payments are not connected.";
+    show("s3");
+    note("Email verified. Payment setup is unavailable until a real gateway is connected.",true);
   }catch(e){note("Could not reach the server ("+(e.message||e)+"). Check API_URL ends with /exec and access is set to Anyone.");}
   finally{setBusy($("verifyBtn"),false,"Verify OTP");}
 };
@@ -209,21 +243,24 @@ $("verifyBtn").onclick=async()=>{
    then return { paymentId: "<subscription or mandate id from gateway>" }.
    Throw an Error if the payment fails or the user closes the window. */
 async function startPayment(order){
-  if(!CONFIG.PAYMENT_ENABLED) return {paymentId:"TEST-"+Date.now(),status:"Test"}; // test mode, no real money
-  throw new Error("Payment gateway is not connected yet.");
+  throw new Error("Online payment is not available yet. No money has been collected and no recurring mandate has been created. Connect and verify a real payment gateway before accepting donations.");
 }
 $("payBtn").onclick=async()=>{
-  const f=form(); setBusy($("payBtn"),true,"Approve auto-debit");
+  const f=form();
+  if(!token || verifiedEmail!==f.email.toLowerCase()) return note("Please verify your email again.");
+  setBusy($("payBtn"),true,"Continue to secure payment");
   try{
-    const p=await startPayment(f);
-    const r=await api({action:"record",token,...f,paymentId:p.paymentId,status:p.status||"Success"});
-    if(!r.ok) return note(r.error);
-    show("s4"); load();
+    const p=await startPayment({...f,email:verifiedEmail});
+    if(!p || !p.paymentId || p.status!=="Success") throw new Error("Payment was not confirmed by the provider.");
+    const r=await api({action:"record",token,...f,email:verifiedEmail,paymentId:p.paymentId,status:"Success"});
+    if(!r.ok) return note(r.error||"Could not record the verified payment.");
+    show("s4"); await load();
   }catch(e){note(e.message||"Payment was not completed.");}
-  finally{setBusy($("payBtn"),false,"Approve auto-debit");}
+  finally{setBusy($("payBtn"),false,"Continue to secure payment");}
 };
 
-load(); setInterval(load,60000);
+load(); setInterval(()=>{if(!document.hidden) load();},60000);
+window.addEventListener("online",load);
 </script>
 </body>
 </html>
