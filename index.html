@@ -185,7 +185,7 @@ async function sendOtp(){
     const r=await api({action:"sendOtp",email:f.email,name:f.name});
     if(!r.ok) return note(r.error);
     $("mailTo").textContent=f.email; show("s2"); note("OTP sent. Check your inbox and spam folder.",true);
-  }catch(e){note("Network problem. Please try again.");}
+  }catch(e){note("Could not reach the server ("+(e.message||e)+"). Check API_URL ends with /exec and access is set to Anyone.");}
   finally{setBusy($("otpBtn"),false,"Send OTP to my email");}
 }
 $("otpBtn").onclick=sendOtp; $("resend").onclick=sendOtp; $("back").onclick=()=>show("s1");
@@ -198,7 +198,7 @@ $("verifyBtn").onclick=async()=>{
     if(!r.ok) return note(r.error);
     token=r.token; const f=form();
     $("payAmt").textContent=inr(f.amount)+" every month"; $("payFor").textContent=f.purpose; show("s3");
-  }catch(e){note("Network problem. Please try again.");}
+  }catch(e){note("Could not reach the server ("+(e.message||e)+"). Check API_URL ends with /exec and access is set to Anyone.");}
   finally{setBusy($("verifyBtn"),false,"Verify OTP");}
 };
 
